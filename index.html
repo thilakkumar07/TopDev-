@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cosmic Dev</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            cosmic: {
+              bg: '#050811',
+              card: 'rgba(13, 20, 36, 0.65)',
+              border: 'rgba(56, 189, 248, 0.12)',
+              cyan: '#06b6d4',
+              green: '#10b981',
+              pink: '#ec4899',
+              darker: '#03050a'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Custom stylesheet for advanced visual layers -->
+  <link rel="stylesheet" href="styles.css">
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="manifest.json">
+  <!-- Meta tags for PWA mobile support -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#050811">
+  <meta name="description" content="Ultimate productivity engine for software developers. Features Ivy Lee tasks, custom motivation intentions, developer rank systems, and activity heatmaps.">
+</head>
+<body class="min-h-screen text-slate-100 flex flex-col selection:bg-cyan-500/30 selection:text-cyan-200">
+
+  <!-- Header Banner -->
+  <header class="border-b border-slate-800/80 bg-slate-950/40 backdrop-blur-md sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-col md:flex-row items-center justify-between gap-4">
+      
+      <!-- Logo & App Name -->
+      <div class="flex items-center gap-3">
+        <div class="p-2 bg-gradient-to-tr from-cyan-500 to-emerald-500 rounded-xl shadow-lg shadow-cyan-500/20">
+          <i data-lucide="terminal" class="w-6 height-6 text-slate-950 stroke-[2.5]"></i>
+        </div>
+        <div>
+          <h1 class="text-xl font-bold tracking-tight flex items-center gap-2">
+            <span class="shimmer-text">COSMIC DEV</span>
+            <span class="text-xs uppercase px-2 py-0.5 rounded-full bg-cyan-950/50 border border-cyan-800/30 text-cyan-400 font-mono tracking-widest font-bold">OS-Sync</span>
+          </h1>
+          <p class="text-xxs text-slate-500 font-mono mt-0.5">V1.0.0 // LOCAL STORAGE ONLY</p>
+        </div>
+      </div>
+
+      <!-- Time Traveler / Date Controller -->
+      <div class="flex items-center gap-2 bg-slate-900/60 border border-slate-800 p-1.5 rounded-xl font-mono text-sm">
+        <button id="btn-prev-day" class="p-1.5 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-cyan-400 transition-colors" title="Previous Day">
+          <i data-lucide="chevron-left" class="w-4 h-4"></i>
+        </button>
+        <div class="relative flex items-center">
+          <input type="date" id="date-picker" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10">
+          <button id="date-display" class="px-3 py-1 hover:bg-slate-800/80 rounded-lg flex items-center gap-2 text-slate-300">
+            <i data-lucide="calendar" class="w-4 h-4 text-cyan-400"></i>
+            <span id="active-date-label">Loading...</span>
+          </button>
+        </div>
+        <button id="btn-next-day" class="p-1.5 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-cyan-400 transition-colors" title="Next Day">
+          <i data-lucide="chevron-right" class="w-4 h-4"></i>
+        </button>
+        <button id="btn-today" class="px-2.5 py-1 text-xs bg-slate-800 hover:bg-slate-700/80 rounded-lg text-cyan-400 font-semibold transition-colors" title="Jump to Today">
+          TODAY
+        </button>
+      </div>
+
+      <!-- Developer Rank Card -->
+      <div class="flex items-center gap-3 bg-slate-900/40 border border-slate-800/60 p-2 rounded-xl max-w-xs w-full sm:w-auto">
+        <div class="p-2 bg-slate-800/50 rounded-lg text-cyan-400 flex items-center justify-center border border-slate-700/40 relative">
+          <i data-lucide="award" class="w-5 h-5"></i>
+          <span id="dev-level-num" class="absolute -top-1.5 -right-1.5 bg-cyan-500 text-slate-950 font-bold text-xxs px-1 rounded-full scale-90">1</span>
+        </div>
+        <div class="flex-1 font-mono">
+          <div class="flex justify-between items-center text-xs">
+            <span id="dev-rank-title" class="font-bold text-slate-200">Sandbox Intern</span>
+            <span id="dev-xp-total" class="text-cyan-400 font-semibold">0 XP</span>
+          </div>
+          <!-- XP Progress Bar -->
+          <div class="w-32 bg-slate-800 rounded-full h-1.5 mt-1.5 overflow-hidden">
+            <div id="dev-xp-progress" class="bg-gradient-to-r from-cyan-500 to-emerald-500 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+  </header>
+
+  <!-- Main Workstation Layout -->
+  <main class="max-w-7xl mx-auto w-full px-4 py-6 flex-1 flex flex-col gap-6">
+
+    <!-- Motivation Intention Block (Static / Absolute Top Focus) -->
+    <section class="glass-panel glass-panel-glow-cyan p-5 rounded-2xl relative overflow-hidden">
+      <!-- Background glowing orb -->
+      <div class="absolute -right-16 -top-16 w-32 h-32 bg-cyan-500/10 rounded-full blur-2xl"></div>
+      
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
+        <div class="flex items-center gap-2">
+          <div class="w-2 h-2 rounded-full bg-cyan-500 animate-ping"></div>
+          <h2 class="text-sm font-mono uppercase tracking-wider text-slate-400 flex items-center gap-2">
+            Focus Intention of the Day
+          </h2>
+          <span id="motivation-lock-badge" class="hidden text-xxs font-mono px-2 py-0.5 rounded-md locked-badge">
+            <i data-lucide="lock" class="w-3 h-3 inline mr-1"></i> LOCKED (PAST DATE)
+          </span>
+        </div>
+        <div id="motivation-status" class="text-xs font-mono text-slate-500 flex items-center gap-1">
+          <i data-lucide="check-check" class="w-3.5 h-3.5 text-slate-600"></i> Local storage synchronized
+        </div>
+      </div>
+
+      <div class="relative">
+        <textarea id="motivation-input" 
+                  rows="2" 
+                  class="w-full bg-slate-900/60 border border-slate-800/80 rounded-xl px-4 py-3 text-slate-100 placeholder-slate-600 focus:outline-none focus:border-cyan-500/60 focus:ring-1 focus:ring-cyan-500/30 transition-all font-sans text-lg italic tracking-wide" 
+                  placeholder="Set your daily coding intention, architectural rule, or motivation quote..."></textarea>
+        <!-- Save button wrapper (for manual save feedback or when autosave finishes) -->
+        <button id="btn-save-motivation" class="absolute right-3 bottom-3 p-2 bg-slate-800 hover:bg-cyan-950 text-slate-400 hover:text-cyan-400 rounded-lg border border-slate-700/80 hover:border-cyan-800/50 transition-all shadow-md" title="Force Save Intention">
+          <i data-lucide="save" class="w-4 h-4"></i>
+        </button>
+      </div>
+    </section>
+
+    <!-- Productivity Matrix 3-Column Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      
+      <!-- COLUMN 1: Ivy Lee Task Board (Cols: 5) -->
+      <section class="lg:col-span-5 glass-panel p-5 rounded-2xl flex flex-col gap-4">
+        
+        <div class="flex items-center justify-between border-b border-slate-800/80 pb-3">
+          <div class="flex items-center gap-2">
+            <i data-lucide="list-todo" class="w-5 h-5 text-cyan-400"></i>
+            <h2 class="text-lg font-bold tracking-tight font-display">Ivy Lee Board</h2>
+          </div>
+          <div class="flex items-center gap-2">
+            <span id="task-limit-badge" class="font-mono text-xs px-2.5 py-1 rounded-full bg-slate-900/80 border border-slate-800 text-slate-400">
+              <span id="task-count">0</span> / 6 Tasks
+            </span>
+            <!-- Simple Ring Meter -->
+            <div class="relative w-7 h-7 flex items-center justify-center">
+              <svg class="w-full h-full transform -rotate-90">
+                <circle cx="14" cy="14" r="11" class="stroke-slate-800 fill-none" stroke-width="2.5"/>
+                <circle id="task-progress-ring" cx="14" cy="14" r="11" class="stroke-cyan-500 fill-none transition-all duration-300" stroke-width="2.5" stroke-dasharray="69.1" stroke-dashoffset="69.1"/>
+              </svg>
+              <span id="task-ratio-text" class="absolute text-[8px] font-mono text-cyan-400 font-bold">0%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Add Task inline layout -->
+        <form id="add-task-form" class="flex flex-col gap-2">
+          <div class="flex gap-2">
+            <input type="text" id="task-title-input" 
+                   class="flex-1 bg-slate-900/60 border border-slate-850 rounded-xl px-3.5 py-2.5 text-sm text-slate-100 placeholder-slate-600 focus:outline-none focus:border-cyan-500/50 transition-all" 
+                   placeholder="Add new task (Max 6 total)..." required max="120">
+            <select id="task-priority-select" 
+                    class="bg-slate-900/60 border border-slate-850 rounded-xl px-3 text-xs text-slate-400 focus:outline-none focus:border-cyan-500/50 cursor-pointer font-mono">
+              <option value="1">High (1)</option>
+              <option value="2">Medium (2)</option>
+              <option value="3">Low (3)</option>
+            </select>
+          </div>
+          <button type="submit" id="btn-add-task" class="w-full bg-slate-900 hover:bg-cyan-500 hover:text-slate-950 border border-slate-800 hover:border-cyan-400 rounded-xl py-2.5 text-xs text-slate-300 font-mono tracking-wider font-semibold transition-all flex items-center justify-center gap-2">
+            <i data-lucide="plus" class="w-4 h-4"></i> SERIALIZE TO LIST
+          </button>
+        </form>
+
+        <!-- Dynamic Serialized Task Queue -->
+        <div class="flex flex-col gap-2.5 min-h-[220px]" id="task-list-container">
+          <!-- Dynamically populated tasks go here -->
+          <div class="flex flex-col items-center justify-center py-10 text-slate-500 border border-dashed border-slate-800 rounded-xl bg-slate-950/20">
+            <i data-lucide="clipboard-list" class="w-8 h-8 text-slate-700 mb-2"></i>
+            <p class="text-xs font-mono">Queue is empty for this date</p>
+            <p class="text-[10px] text-slate-600 font-mono mt-1">Focus on serialization &bull; Ivy Lee method</p>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- COLUMN 2: Language Mastery Terminal (Cols: 7) -->
+      <section class="lg:col-span-7 glass-panel p-5 rounded-2xl flex flex-col gap-4">
+        
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-800/80 pb-3 gap-2">
+          <div class="flex items-center gap-2">
+            <i data-lucide="cpu" class="w-5 h-5 text-emerald-400"></i>
+            <h2 class="text-lg font-bold tracking-tight font-display">Language Mastery Terminal</h2>
+          </div>
+          <div class="flex items-center gap-2">
+            <label class="text-xs text-slate-500 font-mono" for="stack-selector">Target Stack:</label>
+            <select id="stack-selector" class="bg-slate-900/80 border border-slate-800/80 rounded-lg px-2.5 py-1 text-xs text-slate-300 font-mono focus:outline-none focus:border-emerald-500/50 cursor-pointer">
+              <option value="TypeScript">TypeScript (Web)</option>
+              <option value="Go">Go (Backend/Distributed)</option>
+              <option value="Rust">Rust (Systems/WASM)</option>
+              <option value="Python">Python (AI/Data Science)</option>
+              <option value="System Design">System Design (Architect)</option>
+              <option value="C++">C++ (Performance Engine)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Mastery Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          
+          <!-- Skill checklist milestones -->
+          <div class="bg-slate-900/40 border border-slate-800/80 p-4 rounded-xl flex flex-col gap-3">
+            <h3 class="text-xs font-mono uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+              <i data-lucide="milestone" class="w-3.5 h-3.5 text-emerald-400"></i> Stack Milestones
+            </h3>
+            
+            <div id="milestone-container" class="flex flex-col gap-2.5 text-xs font-mono mt-1">
+              <!-- Dynamically populated milestones based on stack selector -->
+            </div>
+            
+            <p class="text-[10px] text-slate-500 italic mt-2 border-t border-slate-800/60 pt-2 font-mono">
+              +50 XP per verified milestone. Persists across all calendar days.
+            </p>
+          </div>
+
+          <!-- Daily Logging Metrics -->
+          <div class="bg-slate-900/40 border border-slate-800/80 p-4 rounded-xl flex flex-col gap-3 relative">
+            <div class="flex justify-between items-center">
+              <h3 class="text-xs font-mono uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                <i data-lucide="history" class="w-3.5 h-3.5 text-cyan-400"></i> Daily Study log
+              </h3>
+              <span id="mastery-lock-badge" class="hidden text-[10px] font-mono text-rose-500 bg-rose-500/10 border border-rose-500/20 px-1.5 py-0.25 rounded">
+                LOCKED
+              </span>
+            </div>
+
+            <form id="study-log-form" class="flex flex-col gap-2 text-xs font-mono">
+              <div class="grid grid-cols-2 gap-2">
+                <div class="flex flex-col gap-1">
+                  <label for="log-hours" class="text-slate-500 text-[10px]">Hours Studied</label>
+                  <input type="number" id="log-hours" min="0" max="24" step="0.5" 
+                         class="bg-slate-950/60 border border-slate-850 rounded-lg p-2 text-slate-100 text-center font-bold focus:outline-none focus:border-emerald-500/50" 
+                         placeholder="0.0">
+                </div>
+                <div class="flex flex-col gap-1">
+                  <label for="log-challenges" class="text-slate-500 text-[10px]">LeetCode / Solved</label>
+                  <input type="number" id="log-challenges" min="0" max="100" 
+                         class="bg-slate-950/60 border border-slate-850 rounded-lg p-2 text-slate-100 text-center font-bold focus:outline-none focus:border-emerald-500/50" 
+                         placeholder="0">
+                </div>
+              </div>
+
+              <div class="flex flex-col gap-1 mt-1">
+                <label for="log-concept" class="text-slate-500 text-[10px]">Core Concept Mastered Today</label>
+                <textarea id="log-concept" rows="2" 
+                          class="bg-slate-950/60 border border-slate-850 rounded-lg p-2 text-slate-100 focus:outline-none focus:border-emerald-500/50 font-sans" 
+                          placeholder="What did you learn? (e.g. understood async execution flow in Node.js)"></textarea>
+              </div>
+
+              <button type="submit" id="btn-save-log" 
+                      class="mt-2 w-full bg-slate-950 hover:bg-emerald-500 hover:text-slate-950 border border-slate-800 hover:border-emerald-400 rounded-lg py-2 text-xxs font-bold tracking-widest text-emerald-400 transition-all flex items-center justify-center gap-1">
+                <i data-lucide="file-check" class="w-3.5 h-3.5"></i> SAVE LOG & GAIN XP
+              </button>
+            </form>
+          </div>
+
+        </div>
+
+      </section>
+
+    </div>
+
+    <!-- LeetCode-Style Activity Board -->
+    <section class="glass-panel p-5 rounded-2xl flex flex-col gap-4 relative">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-800/80 pb-3 gap-2">
+        <div class="flex items-center gap-2">
+          <i data-lucide="grid" class="w-5 h-5 text-emerald-500"></i>
+          <h2 class="text-lg font-bold tracking-tight font-display">Activity Horizon Heatmap</h2>
+          <span class="text-xxs font-mono text-slate-500">(Trailing 52 Weeks)</span>
+        </div>
+        <div class="flex items-center gap-2 text-xs font-mono text-slate-400">
+          <span>Less</span>
+          <div class="w-3 h-3 rounded-sm hm-0 border border-slate-800"></div>
+          <div class="w-3 h-3 rounded-sm hm-1"></div>
+          <div class="w-3 h-3 rounded-sm hm-2"></div>
+          <div class="w-3 h-3 rounded-sm hm-3"></div>
+          <span>More</span>
+        </div>
+      </div>
+
+      <!-- Scrollable Heatmap Wrapper -->
+      <div class="overflow-x-auto select-none mt-2">
+        <div class="min-w-[850px] relative">
+          <!-- Calendar Headings -->
+          <div class="flex font-mono text-[9px] text-slate-500 mb-1 pl-6 justify-between select-none">
+            <!-- Programmatically rendered month abbreviations -->
+            <div class="w-full flex justify-between" id="heatmap-months-labels">
+              <span>Jul</span><span>Aug</span><span>Sep</span><span>Oct</span><span>Nov</span><span>Dec</span><span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span>
+            </div>
+          </div>
+          
+          <div class="flex">
+            <!-- Day labels -->
+            <div class="flex flex-col justify-between font-mono text-[8px] text-slate-600 mr-2 pr-1 h-[95px] select-none py-1">
+              <span>Mon</span>
+              <span>Wed</span>
+              <span>Fri</span>
+            </div>
+            <!-- Interactive Grid -->
+            <div class="heatmap-container flex-1 h-[95px]" id="heatmap-grid">
+              <!-- Dynamically rendered cells -->
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Interactive Tooltip DOM element -->
+      <div id="tooltip" class="heatmap-tooltip">
+        Tooltip Info
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Global Footer -->
+  <footer class="border-t border-slate-900 bg-slate-950/60 py-4 mt-8">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-slate-500">
+      <div class="flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+        <span id="connection-status">Online System Active</span>
+      </div>
+      <div class="text-center sm:text-right flex items-center gap-3">
+        <span>Cosmic Growth Engine &bull; Strictly Client-Side</span>
+        <button id="btn-install-pwa" class="hidden px-2.5 py-1 rounded bg-slate-900 hover:bg-slate-800 text-cyan-400 border border-slate-800 text-xxs font-bold transition-all">
+          INSTALL APP
+        </button>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Edit Task Modal -->
+  <div id="edit-task-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300">
+    <div class="w-full max-w-md glass-panel p-6 rounded-2xl flex flex-col gap-4 transform scale-95 transition-transform duration-300">
+      <div class="flex items-center justify-between border-b border-slate-800/80 pb-3">
+        <h3 class="text-md font-bold font-display flex items-center gap-2 text-cyan-400">
+          <i data-lucide="edit-3" class="w-4 h-4"></i> Edit Task Definition
+        </h3>
+        <button id="btn-close-modal" class="p-1 hover:bg-slate-850 rounded-lg text-slate-400 hover:text-slate-200 transition-colors">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+      
+      <div class="flex flex-col gap-3 font-mono text-xs">
+        <input type="hidden" id="edit-task-id">
+        <div class="flex flex-col gap-1">
+          <label for="edit-task-title" class="text-slate-400">Task Title</label>
+          <input type="text" id="edit-task-title" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-slate-100 text-sm focus:outline-none focus:border-cyan-500/50">
+        </div>
+        <div class="flex flex-col gap-1 mt-1">
+          <label for="edit-task-priority" class="text-slate-400">Priority Level</label>
+          <select id="edit-task-priority" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-slate-100 text-sm cursor-pointer focus:outline-none focus:border-cyan-500/50">
+            <option value="1">High (1)</option>
+            <option value="2">Medium (2)</option>
+            <option value="3">Low (3)</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="flex gap-2.5 mt-2 font-mono text-xs">
+        <button id="btn-cancel-edit" class="flex-1 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded-xl py-3 font-semibold text-slate-400 transition-colors">
+          CANCEL
+        </button>
+        <button id="btn-save-task-edit" class="flex-1 bg-cyan-600 hover:bg-cyan-500 text-slate-950 font-bold rounded-xl py-3 shadow-lg shadow-cyan-500/10 transition-colors">
+          SAVE CHANGES
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification System wrapper -->
+  <div id="toast-container" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none">
+    <!-- Toasts get injected here programmatically -->
+  </div>
+
+  <!-- Load Lucide Icons from CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Main application script -->
+  <script src="app.js"></script>
+</body>
+</html>
