@@ -52,7 +52,7 @@
             <span class="shimmer-text">COSMIC DEV</span>
             <span class="text-xs uppercase px-2 py-0.5 rounded-full bg-cyan-950/50 border border-cyan-800/30 text-cyan-400 font-mono tracking-widest font-bold">OS-Sync</span>
           </h1>
-          <p class="text-xxs text-slate-500 font-mono mt-0.5">V1.0.0 // LOCAL STORAGE ONLY</p>
+          <p class="text-xxs text-slate-500 font-mono mt-0.5">Local Storage Active</p>
         </div>
       </div>
 
@@ -330,11 +330,18 @@
   <footer class="border-t border-slate-900 bg-slate-950/60 py-4 mt-8">
     <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-slate-500">
       <div class="flex items-center gap-2">
-        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-        <span id="connection-status">Online System Active</span>
+        <!-- <span class="w-2 h-2 rounded-full bg-emerald-500"> -->
+        <span class="relative flex h-3 w-3 items-center justify-center">
+             <!-- The outer pulsing radar ring (Fixed size + absolute centering) -->
+             <span class="animate-ping absolute inset-0 m-auto h-2 w-2 rounded-full bg-emerald-400 opacity-75"></span>
+             <!-- The solid center status dot -->
+             <span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
+        </span>
+
+        <span id="connection-status">Online</span>
       </div>
       <div class="text-center sm:text-right flex items-center gap-3">
-        <span>Cosmic Growth Engine &bull; Strictly Client-Side</span>
+        <span>Powered by TopDev</span>
         <button id="btn-install-pwa" class="hidden px-2.5 py-1 rounded bg-slate-900 hover:bg-slate-800 text-cyan-400 border border-slate-800 text-xxs font-bold transition-all">
           INSTALL APP
         </button>
